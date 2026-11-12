@@ -23,8 +23,9 @@ jobs:
 
       - name: Check the required packages
         run: >
-          docker run --rm "$IMAGE" bash -c
-          "which aria2c nmap traceroute && python -c 'import geopandas, babypandas; print(babypandas.__version__)'"
+          docker run --rm --entrypoint bash "$IMAGE" -c
+          'for p in aria2c nmap traceroute; do which "$p" || { echo "missing: $p"; exit 1; }; done;
+          python -c "import geopandas, babypandas; from importlib.metadata import version; print(version(\"babypandas\"))"'
 
       - name: Push
         run: |
